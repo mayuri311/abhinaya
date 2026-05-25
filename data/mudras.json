@@ -1,0 +1,74 @@
+{
+  "pataka": {
+    "name": "Pataka",
+    "translation": "Flag",
+    "description": "All four fingers extended and held together, thumb bent in to touch the base of the index finger.",
+    "viniyoga": [
+      "beginning a dance",
+      "clouds",
+      "a forest",
+      "denial or refusal",
+      "flowing water",
+      "blessing"
+    ]
+  },
+  "tripataka": {
+    "name": "Tripataka",
+    "translation": "Three parts of a flag",
+    "description": "Pataka with the ring finger bent. The three remaining raised fingers give the hasta its name.",
+    "viniyoga": [
+      "a crown",
+      "a tree",
+      "an arrow",
+      "the union of two things",
+      "lamp or light"
+    ]
+  },
+  "ardhachandra": {
+    "name": "Ardhachandra",
+    "translation": "Half moon",
+    "description": "All four fingers extended and spread, thumb stretched out fully so the hand forms a crescent.",
+    "viniyoga": [
+      "the crescent moon",
+      "the neck",
+      "a spear",
+      "greeting an equal",
+      "the waist"
+    ]
+  },
+  "mushti": {
+    "name": "Mushti",
+    "translation": "Fist",
+    "description": "All four fingers curled into the palm, thumb pressed over them.",
+    "viniyoga": [
+      "grasping or holding",
+      "steadiness or firmness",
+      "wrestling or strength",
+      "holding a weapon"
+    ]
+  },
+  "shikhara": {
+    "name": "Shikhara",
+    "translation": "Peak or spire",
+    "description": "All four fingers curled into the palm, thumb raised straight up.",
+    "viniyoga": [
+      "a bow",
+      "a pillar",
+      "asking or affirming",
+      "the lord of love",
+      "sound of a bell"
+    ]
+  },
+  "kapittha": {
+    "name": "Kapittha",
+    "translation": "Wood-apple",
+    "description": "Fingers curled, thumb pressing over the tip of the bent index finger.",
+    "viniyoga": [
+      "the goddess Lakshmi",
+      "the goddess Saraswati",
+      "holding cymbals",
+      "milking a cow",
+      "holding flowers"
+    ]
+  }
+}
