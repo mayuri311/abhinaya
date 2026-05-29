@@ -2,7 +2,7 @@
   "pataka": {
     "name": "Pataka",
     "translation": "Flag",
-    "description": "All four fingers extended and held together, thumb bent in to touch the base of the index finger.",
+    "description": "Palm faces forward, all four fingers extended and held tightly together pointing upward, with the thumb bent in across the base of the index. The forearm rises so the hand stands tall like a banner.",
     "viniyoga": [
       "beginning a dance",
       "clouds",
@@ -15,7 +15,7 @@
   "tripataka": {
     "name": "Tripataka",
     "translation": "Three parts of a flag",
-    "description": "Pataka with the ring finger bent. The three remaining raised fingers give the hasta its name.",
+    "description": "Pataka with the ring finger folded down to meet the palm — index, middle, and pinky stand tall while the thumb stays tucked. The hand is held upright, the three raised fingers giving the hasta its name.",
     "viniyoga": [
       "a crown",
       "a tree",
@@ -24,10 +24,46 @@
       "lamp or light"
     ]
   },
+  "ardhapataka": {
+    "name": "Ardhapataka",
+    "translation": "Half flag",
+    "description": "Tripataka with the pinky also curled in — only the index and middle fingers remain extended, held close together, and the thumb stays tucked at the base. The hand is held upright, fingers reaching up.",
+    "viniyoga": [
+      "leaves",
+      "a flat sword",
+      "a banner",
+      "the top of a tower",
+      "both"
+    ]
+  },
+  "kartarimukha": {
+    "name": "Kartarimukha",
+    "translation": "Scissors' face",
+    "description": "Index and middle fingers extended upward but spread widely apart like an open pair of scissors; ring and pinky are folded down into the palm with the thumb resting on them. The wrist holds the hand upright.",
+    "viniyoga": [
+      "separation",
+      "lightning",
+      "the falling of a star",
+      "death of an enemy",
+      "lover's quarrel"
+    ]
+  },
+  "mayura": {
+    "name": "Mayura",
+    "translation": "Peacock",
+    "description": "Ring finger curls in until its tip meets the tip of the thumb, forming the peacock's neck; the index, middle, and pinky stay extended like crest feathers. The forearm slants up so the curl points outward.",
+    "viniyoga": [
+      "a peacock's beak",
+      "a creeper",
+      "a bird",
+      "wiping away tears",
+      "the forehead mark"
+    ]
+  },
   "ardhachandra": {
     "name": "Ardhachandra",
     "translation": "Half moon",
-    "description": "All four fingers extended and spread, thumb stretched out fully so the hand forms a crescent.",
+    "description": "All four fingers extended and spread apart, while the thumb stretches fully out to the side in the same plane — together the hand and thumb form a clean crescent. The palm faces forward.",
     "viniyoga": [
       "the crescent moon",
       "the neck",
@@ -36,10 +72,32 @@
       "the waist"
     ]
   },
+  "arala": {
+    "name": "Arala",
+    "translation": "Bent",
+    "description": "Pataka with only the index finger curved forward at the tip while the middle, ring, and pinky stay extended together; the thumb hugs the base of the curved index. The hand is held upright, palm forward.",
+    "viniyoga": [
+      "drinking nectar or poison",
+      "a sharp wind",
+      "courage",
+      "auspicious words"
+    ]
+  },
+  "shukatunda": {
+    "name": "Shukatunda",
+    "translation": "Parrot's beak",
+    "description": "Arala with the ring finger also folded down — the index curves forward like a beak while the middle and pinky stay extended; the thumb rests against the bent ring. The hand points forward, palm sideways.",
+    "viniyoga": [
+      "shooting an arrow",
+      "throwing a spear",
+      "esoteric meanings",
+      "mystery"
+    ]
+  },
   "mushti": {
     "name": "Mushti",
     "translation": "Fist",
-    "description": "All four fingers curled into the palm, thumb pressed over them.",
+    "description": "All four fingers curled tightly into the palm, with the thumb pressed firmly over them. The closed fist is held with the back of the hand or knuckles facing forward.",
     "viniyoga": [
       "grasping or holding",
       "steadiness or firmness",
@@ -50,7 +108,7 @@
   "shikhara": {
     "name": "Shikhara",
     "translation": "Peak or spire",
-    "description": "All four fingers curled into the palm, thumb raised straight up.",
+    "description": "All four fingers curled into the palm with the thumb raised straight up like a spire. The wrist stands so the thumb points toward the sky.",
     "viniyoga": [
       "a bow",
       "a pillar",
@@ -62,13 +120,204 @@
   "kapittha": {
     "name": "Kapittha",
     "translation": "Wood-apple",
-    "description": "Fingers curled, thumb pressing over the tip of the bent index finger.",
+    "description": "All four fingers curled, with the thumb pressing firmly over the tip of the bent index finger as if pinching a small fruit. The hand is held forward, palm sideways.",
     "viniyoga": [
       "the goddess Lakshmi",
       "the goddess Saraswati",
       "holding cymbals",
       "milking a cow",
       "holding flowers"
+    ]
+  },
+  "katakamukha": {
+    "name": "Katakamukha",
+    "translation": "Link in a chain",
+    "description": "Index and middle fingers bend in until their tips meet the tip of the thumb, forming a small three-fingered ring; ring and pinky stay curled in the palm. The wrist turns so the loop faces outward.",
+    "viniyoga": [
+      "plucking flowers",
+      "holding a garland",
+      "drawing a bow",
+      "talking",
+      "wearing pearls"
+    ]
+  },
+  "suchi": {
+    "name": "Suchi",
+    "translation": "Needle",
+    "description": "Index finger extends out straight while the middle, ring, and pinky curl into the palm with the thumb folded over them. The arm reaches forward so the index points sharply away from the body.",
+    "viniyoga": [
+      "the number one",
+      "the supreme being",
+      "a town",
+      "the world",
+      "threatening"
+    ]
+  },
+  "chandrakala": {
+    "name": "Chandrakala",
+    "translation": "Digit of the moon",
+    "description": "Index finger extended upward with the thumb stretched out sideways at a right angle, while middle, ring, and pinky stay curled — the index and thumb together trace a slender crescent. The hand is held upright.",
+    "viniyoga": [
+      "the new moon",
+      "a face",
+      "a digit of the moon"
+    ]
+  },
+  "padmakosha": {
+    "name": "Padmakosha",
+    "translation": "Lotus bud",
+    "description": "All five fingers spread apart and gently curved inward at the joints, the palm slightly cupped like a half-opened lotus. The hand is held forward, fingertips reaching outward.",
+    "viniyoga": [
+      "a closing lotus",
+      "round fruits",
+      "a ball",
+      "an offering of flowers",
+      "a breast"
+    ]
+  },
+  "sarpasirsha": {
+    "name": "Sarpasirsha",
+    "translation": "Snake's head",
+    "description": "All four fingers extended and held together with the palm slightly cupped, thumb tucked in at the base — the hand mimics the hood of a serpent. The wrist tilts so the fingers angle forward.",
+    "viniyoga": [
+      "a snake",
+      "sandal-paste",
+      "sprinkling water",
+      "feeding a deity"
+    ]
+  },
+  "mrigasirsha": {
+    "name": "Mrigasirsha",
+    "translation": "Deer's head",
+    "description": "Sarpasirsha with the thumb and pinky extended outward and the middle three fingers softly bent forward — the hand suggests a deer's face and ears. The wrist usually faces downward.",
+    "viniyoga": [
+      "a deer",
+      "women",
+      "the cheek",
+      "a wheel",
+      "fear",
+      "an argument"
+    ]
+  },
+  "simhamukha": {
+    "name": "Simhamukha",
+    "translation": "Lion's face",
+    "description": "Middle and ring fingers fold down so their tips touch the tip of the thumb, while the index and pinky stretch straight out — the resemblance to a lion's mouth and ears gives the hasta its name. The hand is held forward.",
+    "viniyoga": [
+      "a lion",
+      "an elephant",
+      "a sacrifice",
+      "purity",
+      "wood-apple"
+    ]
+  },
+  "kangula": {
+    "name": "Kangula",
+    "translation": "Tail",
+    "description": "Index, middle, and pinky extended outward while only the ring finger curls down into the palm; the thumb stays extended to the side. The wrist is often held so the palm faces upward.",
+    "viniyoga": [
+      "unripe fruit",
+      "the breast of a young girl",
+      "a small bell",
+      "the chataka bird"
+    ]
+  },
+  "alapadma": {
+    "name": "Alapadma",
+    "translation": "Lotus in full bloom",
+    "description": "All five fingers extended and spread widely in a radial fan, each finger angled out from the next like the petals of a fully bloomed lotus. The palm faces forward.",
+    "viniyoga": [
+      "a fully opened lotus",
+      "the round moon",
+      "beauty",
+      "praise",
+      "longing",
+      "a village"
+    ]
+  },
+  "chatura": {
+    "name": "Chatura",
+    "translation": "Square / Skilful",
+    "description": "Four fingers extended together with the palm held horizontal, while the thumb folds tightly inward across the base of the fingers. The hand is held in front of the body, palm down.",
+    "viniyoga": [
+      "camphor or musk",
+      "small quantities",
+      "gold or copper",
+      "wet substances",
+      "the eye",
+      "differences"
+    ]
+  },
+  "bhramara": {
+    "name": "Bhramara",
+    "translation": "Bee",
+    "description": "Middle finger curls in to meet the tip of the thumb while the index bends down across the palm; the ring and pinky stay extended outward — the hand suggests a bee in flight. The wrist faces forward.",
+    "viniyoga": [
+      "a bee",
+      "a parrot",
+      "the wing of a bird",
+      "union of lovers",
+      "a vow"
+    ]
+  },
+  "hamsasya": {
+    "name": "Hamsasya",
+    "translation": "Swan's face",
+    "description": "Thumb and index fingertips meet to form a delicate ring while the middle, ring, and pinky extend upward together — the joined tips suggest a swan's beak. The hand is held upright.",
+    "viniyoga": [
+      "dropping water",
+      "delicate things",
+      "the marriage thread",
+      "instruction",
+      "certainty",
+      "smallness"
+    ]
+  },
+  "hamsapaksha": {
+    "name": "Hamsapaksha",
+    "translation": "Swan's wing",
+    "description": "All four fingers extended and held together while the thumb stretches outward to the side — the open hand suggests a swan's outstretched wing. The wrist tilts so the fingers angle forward.",
+    "viniyoga": [
+      "building a bridge",
+      "constructing",
+      "minute particles",
+      "putting on the holy mark",
+      "the number six"
+    ]
+  },
+  "mukula": {
+    "name": "Mukula",
+    "translation": "Bud",
+    "description": "All five fingertips drawn together so they meet at a single point, forming a closed flower bud. The hand is held forward, the bunched fingertips facing away from the body.",
+    "viniyoga": [
+      "a water-lily",
+      "eating",
+      "the god of love",
+      "worshipping the deity",
+      "holding a seal"
+    ]
+  },
+  "tamrachuda": {
+    "name": "Tamrachuda",
+    "translation": "Rooster",
+    "description": "Mushti with the thumb pressed against the side of the bent index finger and slightly raised — the closed hand suggests a rooster's head, the thumb its crest. The wrist points forward.",
+    "viniyoga": [
+      "a rooster",
+      "a crane",
+      "a crow",
+      "a camel",
+      "writing",
+      "the number one hundred"
+    ]
+  },
+  "trishula": {
+    "name": "Trishula",
+    "translation": "Trident",
+    "description": "Index, middle, and ring fingers extended upward together while the pinky folds in and the thumb crosses over to hold it — the three raised fingers form the points of a trident. The hand is held upright.",
+    "viniyoga": [
+      "a trident",
+      "the number three",
+      "a wood-apple leaf"
     ]
   }
 }
