@@ -1,0 +1,10 @@
+[
+  { "name": "Kathak",        "state": "Uttar Pradesh",   "region": "North India",     "lat": 26.85, "lon": 80.95 },
+  { "name": "Sattriya",      "state": "Assam",           "region": "Northeast India", "lat": 26.14, "lon": 91.74 },
+  { "name": "Manipuri",      "state": "Manipur",         "region": "Northeast India", "lat": 24.66, "lon": 93.91 },
+  { "name": "Odissi",        "state": "Odisha",          "region": "East India",      "lat": 20.27, "lon": 85.83 },
+  { "name": "Kuchipudi",     "state": "Andhra Pradesh",  "region": "South India",     "lat": 16.62, "lon": 80.99 },
+  { "name": "Bharatanatyam", "state": "Tamil Nadu",      "region": "South India",     "lat": 10.79, "lon": 79.13 },
+  { "name": "Mohiniyattam",  "state": "Kerala",          "region": "South India",     "lat": 10.52, "lon": 76.21 },
+  { "name": "Kathakali",     "state": "Kerala",          "region": "South India",     "lat": 9.59,  "lon": 76.52 }
+]

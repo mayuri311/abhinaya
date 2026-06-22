@@ -1,0 +1,56 @@
+[
+  {
+    "eyebrow": "Our Story",
+    "title": "About Abhinaya",
+    "body": [
+      "CMU Abhinaya is Carnegie Mellon University’s premier competitive Indian classical dance team — conveying stories, experiences, and emotions through movement."
+    ]
+  },
+  {
+    "eyebrow": "Who We Are",
+    "title": "A Living Tradition",
+    "body": [
+      "Our members train in Bharatanatyam, Kuchipudi, Odissi, Mohiniyattam, and other classical styles — each born in a different corner of India, each with its own language of rhythm and expression."
+    ]
+  },
+  {
+    "eyebrow": "What We Do",
+    "title": "Stories in Motion",
+    "body": [
+      "Through abhinaya — the art of expression — we bring myth, devotion, and emotion to the stage, carrying centuries-old repertoire to a modern audience."
+    ]
+  },
+  {
+    "eyebrow": "Community",
+    "title": "Heritage & Belonging",
+    "body": [
+      "Abhinaya is a space to connect with Indian heritage, build lasting community, and practice wellness through the discipline and joy of dance."
+    ]
+  },
+  {
+    "eyebrow": "We Perform At",
+    "title": "On The Stage",
+    "list": ["Diwali on the Mall", "Holi", "Dancer’s Symposium"]
+  },
+  {
+    "eyebrow": "By The Numbers",
+    "title": "Our Team",
+    "stats": [
+      { "count": "5", "label": "Officers" },
+      { "count": "19", "label": "Members" }
+    ]
+  },
+  {
+    "eyebrow": "For Sponsors",
+    "title": "Partner With Us",
+    "body": [
+      "Abhinaya is committed to sharing the beauty and depth of Indian classical dance with the CMU community and beyond. We welcome partnerships that support our mission of cultural connection and artistic excellence."
+    ]
+  },
+  {
+    "eyebrow": "Get In Touch",
+    "title": "Say Hello",
+    "body": ["We’d love to hear from you."],
+    "cta": { "text": "cmu.abhinaya@gmail.com", "href": "mailto:cmu.abhinaya@gmail.com" }
+  }
+]

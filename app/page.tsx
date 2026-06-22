@@ -1,4 +1,5 @@
 import HennaDivider from "@/components/HennaDivider";
+import DanceGlobe from "@/components/DanceGlobe";
 
 function LotusIcon() {
   return (
@@ -24,7 +25,8 @@ function LotusIcon() {
 
 export default function Home() {
   return (
-    <main className="flex flex-col items-center justify-center flex-1 px-8 py-28 text-center">
+    <main className="flex flex-1 flex-col">
+      <section className="flex flex-1 flex-col items-center justify-center px-8 py-28 text-center">
       <div className="text-henna/50 mb-10 animate-fade-in">
         <LotusIcon />
       </div>
@@ -68,6 +70,9 @@ export default function Home() {
       >
         Show Interest
       </a>
+      </section>
+
+      <DanceGlobe />
     </main>
   );
 }
