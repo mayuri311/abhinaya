@@ -42,3 +42,7 @@ next-env.d.ts
 
 # model artifacts (hosted on Hugging Face, see README)
 /models/
+/scripts/hasta/.venv/
+/tests/fixtures/
+/public/hasta-assets
+__pycache__/

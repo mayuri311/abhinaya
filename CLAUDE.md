@@ -15,8 +15,11 @@ React, Tailwind CSS. Deployed on Vercel.
 - Content lives in JSON data files, not hardcoded in components
 - Tailwind for all styling; no CSS-in-JS
 - Components in /components, pages in /app, data in /data
-- Keep the playground classifier modular and swappable (rule-based now,
-  trained model later) behind a single classifyHasta(landmarks) interface
+- Two playground engines, picked by NEXT_PUBLIC_HASTA_ENGINE (default "rules",
+  what production runs): rule-based classifyHasta(landmarks) in lib/hastaRules.ts,
+  and the DINOv2 + kNN classifier in lib/hasta/ (pixels in, HastaResult out).
+  lib/hasta/preprocess.ts must stay pixel-exact with scripts/hasta/hasta_ref.py;
+  run `npm test` and `npm run test:e2e` after touching either
 
 ## Design language
 - Scrapbook / handmade feel: polaroid frames, slight rotations, warm tones

@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Python env for scripts/hasta
+    "scripts/hasta/.venv/**",
+    // local Claude Code skills (untracked tooling)
+    ".claude/**",
   ]),
 ]);
 

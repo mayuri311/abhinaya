@@ -6,12 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:e2e": "node tests/e2e/hasta.e2e.mjs"
   },
   "dependencies": {
     "@mediapipe/tasks-vision": "^0.10.14",
     "d3-geo": "^3.1.1",
     "next": "16.2.6",
+    "onnxruntime-web": "^1.22.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "topojson-client": "^3.1.0",
@@ -24,9 +27,12 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/topojson-client": "^3.1.5",
+    "esbuild": "^0.28.2",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
+    "puppeteer-core": "^24.10.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.4"
   }
 }
