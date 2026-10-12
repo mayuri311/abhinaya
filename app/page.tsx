@@ -1,5 +1,7 @@
 import HennaDivider from "@/components/HennaDivider";
 import DanceGlobe from "@/components/DanceGlobe";
+import LiquidText from "@/components/LiquidText";
+import MomentsReel from "@/components/MomentsReel";
 
 function LotusIcon() {
   return (
@@ -32,10 +34,10 @@ export default function Home() {
       </div>
 
       <h1
-        className="font-heading text-7xl md:text-8xl tracking-widest text-ink animate-fade-up"
+        className="font-heading text-7xl md:text-8xl tracking-widest animate-fade-up"
         style={{ animationDelay: "120ms" }}
       >
-        CMU Abhinaya
+        <LiquidText goo>CMU Abhinaya</LiquidText>
       </h1>
 
       <p
@@ -71,6 +73,8 @@ export default function Home() {
         Show Interest
       </a>
       </section>
+
+      <MomentsReel />
 
       <DanceGlobe />
     </main>

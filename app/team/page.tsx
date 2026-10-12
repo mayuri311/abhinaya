@@ -1,4 +1,5 @@
 import HennaDivider from "@/components/HennaDivider";
+import LiquidText from "@/components/LiquidText";
 import PolaroidCard from "@/components/PolaroidCard";
 import teamData from "@/data/team.json";
 
@@ -18,7 +19,7 @@ export default function Team() {
         <p className="text-xs tracking-[0.28em] uppercase text-ink/35 mb-4">
           Leadership
         </p>
-        <h1 className="font-heading text-6xl text-ink">Team</h1>
+        <h1 className="font-heading text-6xl"><LiquidText>Team</LiquidText></h1>
         <div className="mt-10 w-52 text-gold/60 mx-auto">
           <HennaDivider />
         </div>

@@ -1,4 +1,5 @@
 import HennaDivider from "@/components/HennaDivider";
+import LiquidText from "@/components/LiquidText";
 
 const contacts = [
   {
@@ -36,20 +37,22 @@ export default function Contact() {
         <p className="text-xs tracking-[0.28em] uppercase text-ink/35 mb-4">
           Get in Touch
         </p>
-        <h1 className="font-heading text-6xl text-ink">Contact</h1>
+        <h1 className="font-heading text-6xl"><LiquidText>Contact</LiquidText></h1>
         <div className="mt-10 w-52 text-gold/60 mx-auto">
           <HennaDivider />
         </div>
       </header>
 
       <section
-        className="animate-fade-up"
+        className="liquid-glass rounded-sm px-8 py-4 md:px-10 animate-fade-up"
         style={{ animationDelay: "180ms" }}
       >
-        {contacts.map(({ label, value, href }) => (
+        {contacts.map(({ label, value, href }, i) => (
           <div
             key={label}
-            className="flex items-baseline justify-between py-7 border-b border-henna/10"
+            className={`flex items-baseline justify-between py-7 ${
+              i < contacts.length - 1 ? "border-b border-henna/12" : ""
+            }`}
           >
             <span className="text-xs tracking-[0.22em] uppercase text-ink/35">
               {label}

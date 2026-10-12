@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import NavBar from "@/components/NavBar";
+import { LiquidDefs } from "@/components/LiquidText";
 import "./globals.css";
 
 const heading = Cormorant_Garamond({
@@ -30,6 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${heading.variable} ${body.variable} h-full`}>
       <body className="min-h-full flex flex-col bg-cream text-ink">
+        <LiquidDefs />
         <NavBar />
         {children}
       </body>

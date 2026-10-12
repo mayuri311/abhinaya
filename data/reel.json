@@ -1,0 +1,26 @@
+[
+  {
+    "provider": "youtube",
+    "id": "ScMzIvxBSi4",
+    "eyebrow": "On Stage",
+    "title": "Diwali on the Mall",
+    "body": "Our showcase piece under the fall lights — abhinaya, rhythm, and a little bit of held breath before the first jathi.",
+    "rotation": "rotate-[-1.4deg]"
+  },
+  {
+    "provider": "youtube",
+    "id": "ScMzIvxBSi4",
+    "eyebrow": "Practice Room",
+    "title": "Adavus, on repeat",
+    "body": "Where it actually happens: mirrors, counts, and the same sixteen beats until the whole line lands together.",
+    "rotation": "rotate-[1.2deg]"
+  },
+  {
+    "provider": "instagram",
+    "id": "C9zXaMoyabc",
+    "eyebrow": "Behind the Scenes",
+    "title": "Green room, five minutes to",
+    "body": "Gajra pinned, bells tied, kajal checked twice. The reel our followers see — stitched together the night before a set.",
+    "rotation": "rotate-[-0.8deg]"
+  }
+]
