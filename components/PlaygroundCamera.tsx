@@ -128,69 +128,6 @@ function drawCropBox(ctx: CanvasRenderingContext2D, r: HastaResult | null) {
   ctx.restore();
 }
 
-type Spot = { x: number; y: number; r: number; a: number };
-
-/**
- * kNN: dim and blur everything but a soft circle around the hand. Follows the
- * per-frame VIDEO landmarks; when those miss (e.g. a hand touching the frame
- * edge, which the padded classifier still finds) it falls back to the
- * classifier's crop box. Eases in and out.
- * Blur = draw the frame at 1/10 size and scale it back up (no ctx.filter,
- * so it also works where canvas filters are unsupported).
- */
-function drawSpotlight(
-  ctx: CanvasRenderingContext2D,
-  tiny: HTMLCanvasElement,
-  video: HTMLVideoElement,
-  w: number,
-  h: number,
-  lm: Landmark[] | null,
-  knnResult: HastaResult | null,
-  spot: Spot,
-) {
-  let target: { cx: number; cy: number; r: number } | null = null;
-  if (lm) {
-    const xs = lm.map((p) => p.x * w);
-    const ys = lm.map((p) => p.y * h);
-    target = {
-      cx: (Math.min(...xs) + Math.max(...xs)) / 2,
-      cy: (Math.min(...ys) + Math.max(...ys)) / 2,
-      r:  Math.max(Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)) * 0.9,
-    };
-  } else if (knnResult?.status === "ok") {
-    const { x, y, w: bw } = knnResult.box; // square, already includes the crop margin
-    target = { cx: x + bw / 2, cy: y + bw / 2, r: bw * 0.65 };
-  }
-  if (target) {
-    const { cx, cy, r } = target;
-    const k  = spot.a < 0.02 ? 1 : 0.35;
-    spot.x += (cx - spot.x) * k;
-    spot.y += (cy - spot.y) * k;
-    spot.r += (r - spot.r) * k;
-  }
-  spot.a += ((target ? 1 : 0) - spot.a) * 0.12;
-  if (spot.a < 0.02) return;
-
-  tiny.width  = Math.max(1, Math.round(w / 10));
-  tiny.height = Math.max(1, Math.round(h / 10));
-  tiny.getContext("2d")!.drawImage(video, 0, 0, tiny.width, tiny.height);
-
-  ctx.save();
-  ctx.globalAlpha = spot.a;
-  ctx.imageSmoothingEnabled = true;
-  ctx.drawImage(tiny, 0, 0, w, h);
-  ctx.fillStyle = "rgba(26,15,9,0.55)";
-  ctx.fillRect(0, 0, w, h);
-  ctx.globalAlpha = 1;
-  ctx.globalCompositeOperation = "destination-out";
-  const hole = ctx.createRadialGradient(spot.x, spot.y, spot.r * 0.6, spot.x, spot.y, spot.r);
-  hole.addColorStop(0, "rgba(0,0,0,1)");
-  hole.addColorStop(1, "rgba(0,0,0,0)");
-  ctx.fillStyle = hole;
-  ctx.fillRect(0, 0, w, h);
-  ctx.restore();
-}
-
 /** The 224×224 image the kNN embedder saw. */
 function ModelView({ buf }: { buf: PixelBuffer }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -228,8 +165,6 @@ export default function PlaygroundCamera() {
   const landmarkerRef = useRef<HandLandmarker | null>(null);
   const rafRef        = useRef<number>(0);
   const frameCount    = useRef(0);
-  const spotRef       = useRef<Spot>({ x: 0, y: 0, r: 0, a: 0 });
-  const tinyRef       = useRef<HTMLCanvasElement | null>(null);
 
   const [status,         setStatus]         = useState<Status>("loading");
   const [errorMsg,       setErrorMsg]       = useState("");
@@ -304,12 +239,6 @@ export default function PlaygroundCamera() {
         ctx.clearRect(0, 0, w, h);
 
         const result = landmarker.detectForVideo(video, performance.now());
-
-        if (IS_KNN) {
-          tinyRef.current ??= document.createElement("canvas");
-          drawSpotlight(ctx, tinyRef.current, video, w, h,
-            (result.landmarks[0] as Landmark[] | undefined) ?? null, knnBoxRef.current, spotRef.current);
-        }
 
         if (result.landmarks[0]) {
           const handedness =
