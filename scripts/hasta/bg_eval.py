@@ -8,10 +8,13 @@ the green and pasted onto real photos, then classified with
   seg_green      non-skin pixels (MediaPipe selfie-multiclass segmenter) → backdrop green
   seg_dark_blur  non-skin pixels → blurred and darkened
 
-Result on 400 val images (2026-10-13, 40 picsum backgrounds), top-1 over detected crops:
+Result on 400 val images (2026-10-13, 40 picsum backgrounds), top-1 over detected crops,
+with the raw segmenter confidence as the mask:
   green screen  raw 0.983  seg_green 0.686  seg_dark_blur 0.718
   cluttered     raw 0.313  seg_green 0.498  seg_dark_blur 0.459
 (A mask drawn from the 21 landmarks instead of the segmenter only reached 0.34–0.37 cluttered.)
+Follow-up on 600 images (368 detected, cluttered): lenient mask min(1, conf/0.5) → 0.543;
+dilating it (0.462) or painting only 70% green (0.340) is worse. skin_mask() now applies it.
 
     python scripts/hasta/bg_eval.py <dataset dir> <dir of background .jpg photos> [--n 400]
 """

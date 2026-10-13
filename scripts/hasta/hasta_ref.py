@@ -30,6 +30,9 @@ MIN_MARGIN = 0.0
 SEGMENTER = "selfie_multiclass_256x256.tflite"  # storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/1/
 BODY_SKIN = 2  # selfie_multiclass classes: 0 bg, 1 hair, 2 body-skin, 3 face-skin, 4 clothes, 5 others
 BACKDROP_GREEN = (74, 198, 119)  # median green-screen pixel over 150 train images (bg_eval.backdrop_green)
+# Lenient mask: skin confidence >= this counts as fully hand, so unsure palm/finger pixels aren't painted.
+# bg_eval-style sweep (368 cluttered crops): 0.3 → 0.519, 0.4 → 0.557, 0.5 → 0.543, 0.6 → 0.546, raw conf → 0.500
+SKIN_FULL_CONFIDENCE = 0.5
 
 
 class HastaPipeline:
@@ -86,7 +89,7 @@ class HastaPipeline:
                 running_mode=vision.RunningMode.IMAGE, output_confidence_masks=True, output_category_mask=False))
         res = self._segmenter.segment(mp.Image(image_format=mp.ImageFormat.SRGB, data=np.ascontiguousarray(np.asarray(crop))))
         conf = res.confidence_masks[BODY_SKIN].numpy_view().astype(np.float32)
-        return np.clip(conf, 0, 1).reshape(crop.size[1], crop.size[0], 1)
+        return np.clip(conf / SKIN_FULL_CONFIDENCE, 0, 1).reshape(crop.size[1], crop.size[0], 1)
 
     def fill_background(self, crop, mask=None, fill=BACKDROP_GREEN):
         mask = self.skin_mask(crop) if mask is None else mask

@@ -58,6 +58,12 @@ export const HASTA_CONFIG = {
     "https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/1/selfie_multiclass_256x256.tflite",
   /** selfie_multiclass classes: 0 bg, 1 hair, 2 body-skin, 3 face-skin, 4 clothes, 5 others */
   skinClass: 2,
+  /**
+   * Lenient mask: skin confidence ≥ this counts as fully hand (mask = min(1, conf / it)),
+   * so pixels the segmenter is unsure about stay as they are instead of turning green.
+   * Sweep on cluttered crops: 0.3 → 0.52, 0.4 → 0.56, 0.5 → 0.54, 0.6 → 0.55, none → 0.50.
+   */
+  skinFullConfidence: num(process.env.NEXT_PUBLIC_HASTA_SKIN_FULL_CONFIDENCE, 0.5),
 
   /** Live video: majority vote over the last N predictions. */
   smoothingWindow: num(process.env.NEXT_PUBLIC_HASTA_SMOOTHING_N, 5),

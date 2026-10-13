@@ -141,6 +141,8 @@ export async function createKnnClassifier(opts: KnnOptions = {}): Promise<KnnCla
     try {
       const mask = res.confidenceMasks?.[HASTA_CONFIG.skinClass]?.getAsFloat32Array();
       if (!mask) throw new Error("segmenter returned no skin mask");
+      const full = HASTA_CONFIG.skinFullConfidence;
+      for (let i = 0; i < mask.length; i++) mask[i] = Math.min(1, mask[i] / full);
       return fillBackground(crop, mask, HASTA_CONFIG.backdropGreen);
     } finally {
       res.close();
