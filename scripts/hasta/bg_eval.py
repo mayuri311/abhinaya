@@ -39,6 +39,17 @@ def green_mask(img):
     return np.asarray(m.filter(ImageFilter.MedianFilter(5))) > 127
 
 
+def composite(img, bg):
+    """Chroma-key the hand off the green screen onto bg (resized to fit), with green-spill removal."""
+    img = img.convert("RGB")
+    soft = np.asarray(Image.fromarray((~green_mask(img)).astype(np.uint8) * 255)
+                      .filter(ImageFilter.GaussianBlur(1.2)), np.float32)[..., None] / 255
+    fg = np.asarray(img, np.float32).copy()
+    fg[..., 1] = np.minimum(fg[..., 1], fg[..., 0])  # despill: skin has G <= R, green fringe doesn't
+    back = np.asarray(bg.convert("RGB").resize(img.size), np.float32)
+    return Image.fromarray(np.clip(soft * fg + (1 - soft) * back, 0, 255).astype(np.uint8))
+
+
 def backdrop_green(paths, n=150):
     """Median green-screen pixel; the source of hasta_ref.BACKDROP_GREEN."""
     px = []
