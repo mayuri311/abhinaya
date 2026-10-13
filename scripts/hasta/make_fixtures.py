@@ -1,8 +1,9 @@
 """Write test fixtures from the Python reference pipeline (tests/fixtures/hasta/, gitignored).
 
 For each sample: <name>.png (PIL-decoded, so JS and Python see identical pixels),
-<name>.rgb (raw RGB), <name>.crop.rgb (the PIL crop) and <name>.json (Python
-result, landmarks, box, embedding). Samples:
+<name>.rgb (raw RGB), <name>.crop.rgb (the PIL crop), <name>.green.rgb (crop
+with the background filled green) and <name>.json (Python result, landmarks,
+box, embeddings with and without the fill). Samples:
   clear_*    train images (their bank entry is themselves)
   ambiguous  the held-out val image with the smallest top1−top2 margin
   no_hand    a background-only patch cut from a dataset image
@@ -34,8 +35,10 @@ def write(pipe, name, img, kind):
     rec.pop("latencyMs")
     if crop is not None:
         np.asarray(crop).tofile(os.path.join(OUT, f"{name}.crop.rgb"))
+        green = pipe.fill_background(crop)
+        np.asarray(green).tofile(os.path.join(OUT, f"{name}.green.rgb"))
         rec.update(pad=info["pad"], landmarksPx=info["landmarks_px"], boxPadded=list(info["box_padded"]),
-                   embedding=pipe.embed(crop).tolist())
+                   embedding=pipe.embed(crop).tolist(), embeddingGreen=pipe.embed(green).tolist())
     with open(os.path.join(OUT, f"{name}.json"), "w") as f:
         json.dump(rec, f)
     top = rec["top5"][0] if rec["status"] == "ok" else None

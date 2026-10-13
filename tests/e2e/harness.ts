@@ -1,7 +1,12 @@
 // Browser side of hasta.e2e.mjs: runs the real lib/hasta classifier on fixture PNGs.
 import { createKnnClassifier } from "@/lib/hasta/knnClassifier";
 
-type Opts = { executionProvider: string; names: string[]; thresholds: { minTop1: number; minMargin: number } };
+type Opts = {
+  executionProvider: string;
+  background: "green" | "none";
+  names: string[];
+  thresholds: { minTop1: number; minMargin: number };
+};
 
 async function loadImage(src: string) {
   const img = new Image();
@@ -15,6 +20,7 @@ async function loadImage(src: string) {
     assetBase: "/models/hasta",
     thresholds: o.thresholds,
     executionProviders: [o.executionProvider],
+    background: o.background,
     createWorker: () => new Worker("/out/embed.worker.js", { type: "module" }),
   });
   const results = [];
@@ -25,7 +31,12 @@ async function loadImage(src: string) {
     const { debug, ...rest } = r;
     results.push({
       name, ...rest,
-      debug: debug && { ...debug, crop: Array.from(debug.crop.data), embedding: Array.from(debug.embedding) },
+      debug: debug && {
+        ...debug,
+        crop: Array.from(debug.crop.data),
+        modelInput: Array.from(debug.modelInput.data),
+        embedding: Array.from(debug.embedding),
+      },
     });
   }
   const ep = clf.executionProvider;

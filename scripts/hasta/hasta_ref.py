@@ -24,9 +24,18 @@ DEFAULT_MODEL_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "models"
 MIN_TOP1 = 0.0
 MIN_MARGIN = 0.0
 
+# Background fill (see lib/hasta/config.ts): every training image is shot on a green screen, so
+# replacing the non-skin part of the crop with that green moves webcam crops toward the bank.
+# scripts/hasta/bg_eval.py: on hands pasted onto real photos, top-1 0.31 -> 0.50.
+SEGMENTER = "selfie_multiclass_256x256.tflite"  # storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/1/
+BODY_SKIN = 2  # selfie_multiclass classes: 0 bg, 1 hair, 2 body-skin, 3 face-skin, 4 clothes, 5 others
+BACKDROP_GREEN = (74, 198, 119)  # median green-screen pixel over 150 train images (bg_eval.backdrop_green)
+
 
 class HastaPipeline:
-    def __init__(self, model_dir=DEFAULT_MODEL_DIR, onnx_name="hasta_dinov2_vits14_embed.onnx"):
+    def __init__(self, model_dir=DEFAULT_MODEL_DIR, onnx_name="hasta_dinov2_vits14_embed.onnx", background=None):
+        """background: None (exact training preprocessing) or "green" (skin-segment + green fill)."""
+        self.model_dir, self.background, self._segmenter = model_dir, background, None
         with open(os.path.join(model_dir, "knn_bank_meta.json")) as f:
             self.meta = json.load(f)
         self.classes = self.meta["classes"]
@@ -69,6 +78,25 @@ class HastaPipeline:
         return crop, {"detected": True, "pad": p, "landmarks_px": lm.tolist(), "box_padded": box,
                       "handedness": h.category_name, "detector_score": float(h.score)}
 
+    def skin_mask(self, crop):
+        """[H, W, 1] body-skin confidence for the crop."""
+        if self._segmenter is None:
+            self._segmenter = vision.ImageSegmenter.create_from_options(vision.ImageSegmenterOptions(
+                base_options=BaseOptions(model_asset_path=os.path.join(self.model_dir, SEGMENTER)),
+                running_mode=vision.RunningMode.IMAGE, output_confidence_masks=True, output_category_mask=False))
+        res = self._segmenter.segment(mp.Image(image_format=mp.ImageFormat.SRGB, data=np.ascontiguousarray(np.asarray(crop))))
+        conf = res.confidence_masks[BODY_SKIN].numpy_view().astype(np.float32)
+        return np.clip(conf, 0, 1).reshape(crop.size[1], crop.size[0], 1)
+
+    def fill_background(self, crop, mask=None, fill=BACKDROP_GREEN):
+        mask = self.skin_mask(crop) if mask is None else mask
+        a = np.asarray(crop, np.float32)
+        out = mask * a + (1 - mask) * np.array(fill, np.float32)
+        return Image.fromarray(np.clip(np.floor(out + 0.5), 0, 255).astype(np.uint8))
+
+    def model_input(self, crop):
+        return self.fill_background(crop) if self.background == "green" else crop
+
     def to_input(self, crop):
         x = (np.asarray(crop, np.float32) / 255.0 - self.mean) / self.std
         return np.ascontiguousarray(x.transpose(2, 0, 1)[None])
@@ -87,7 +115,7 @@ class HastaPipeline:
         crop, info = self.detect_and_crop(img)
         if crop is None:
             return {"status": "no_hand", "latencyMs": (time.perf_counter() - t0) * 1000}
-        scores = self.class_scores(self.embed(crop))
+        scores = self.class_scores(self.embed(self.model_input(crop)))
         order = np.argsort(-scores)[:topn]
         top = [{"label": self.classes[i], "score": float(scores[i])} for i in order]
         margin = top[0]["score"] - top[1]["score"]

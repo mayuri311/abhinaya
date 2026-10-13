@@ -4,7 +4,9 @@
  * Bundles lib/hasta with esbuild, serves it with models/hasta and the fixtures,
  * and drives system Chrome (puppeteer-core). For every fixture it checks the
  * status, and against the Python reference: landmarks, crop box, crop pixels,
- * embedding cosine (>= 0.999) and top-1 label. Runs once per execution provider.
+ * embedding cosine (>= 0.999) and top-1 label. Runs once per execution provider
+ * with background "none" (exact training preprocessing), then once with the
+ * green background fill, checked against Python's green-filled embedding.
  *
  *   python scripts/hasta/make_fixtures.py <dataset>   # once
  *   npm run test:e2e
@@ -27,6 +29,9 @@ const CHROME = process.env.CHROME_PATH ?? "/Applications/Google Chrome.app/Conte
 const EPS = (process.env.HASTA_EPS ?? "wasm,webgpu").split(",");
 const THRESHOLDS = { minTop1: 0, minMargin: 0.01 }; // test-only: exercises the gate, NOT calibrated values
 const COS_MIN = 0.999;
+// Green fill adds a segmenter whose WASM and native builds differ slightly at mask edges.
+const GREEN_COS_MIN = 0.99;
+const RUNS = [...EPS.map((ep) => ({ ep, background: "none" })), { ep: "wasm", background: "green" }];
 
 if (!existsSync(FIXTURES)) {
   console.error("No fixtures. Run: python scripts/hasta/make_fixtures.py <Bharatanatyam-Mudra-Dataset dir>");
@@ -69,28 +74,40 @@ let failures = 0;
 const check = (ok, msg) => { if (!ok) failures++; console.log(`  ${ok ? "PASS" : "FAIL"} ${msg}`); };
 
 try {
-  for (const ep of EPS) {
+  for (const { ep, background } of RUNS) {
     const page = await browser.newPage();
     page.on("pageerror", (e) => console.error("pageerror:", e.message));
     await page.goto(origin);
     await page.waitForFunction(() => "runHasta" in window);
     let run;
     try {
-      run = await page.evaluate((o) => window.runHasta(o), { executionProvider: ep, names: fixtures.map((f) => f.name), thresholds: THRESHOLDS });
+      run = await page.evaluate((o) => window.runHasta(o), { executionProvider: ep, background, names: fixtures.map((f) => f.name), thresholds: THRESHOLDS });
     } catch (e) {
       console.log(`\n== ${ep}: unavailable (${String(e.message).split("\n")[0]})`);
       if (ep === "wasm") failures++;
       await page.close();
       continue;
     }
-    console.log(`\n== ${run.executionProvider}`);
+    console.log(`\n== ${run.executionProvider} · background ${background}`);
     for (const r of run.results) {
       const py = fixtures.find((f) => f.name === r.name);
       console.log(`${r.name} (${py.kind}) → ${r.status}${r.status === "ok" ? ` ${r.top5[0].label} ${r.top5[0].score.toFixed(4)} margin ${r.margin.toFixed(4)} low=${r.lowConfidence}` : ""}  ${r.latencyMs.toFixed(0)} ms`);
       check(r.status === py.status, `status ${r.status} == python ${py.status}`);
-      if (py.kind === "clear") check(r.status === "ok" && !r.lowConfidence, "clear hand → confident");
-      if (py.kind === "ambiguous") check(r.status === "ok" && r.lowConfidence, `ambiguous → lowConfidence (test minMargin ${THRESHOLDS.minMargin})`);
       if (r.status !== "ok" || py.status !== "ok") continue;
+
+      if (background === "green") {
+        const d = r.debug;
+        const pyGreen = readFileSync(path.join(FIXTURES, `${r.name}.green.rgb`));
+        let nDiff = 0, sumDiff = 0;
+        d.modelInput.forEach((v, i) => { const e = Math.abs(v - pyGreen[i]); if (e > 2) nDiff++; sumDiff += e; });
+        const cos = d.embedding.reduce((s, v, i) => s + v * py.embeddingGreen[i], 0);
+        console.log(`    green crop: ${nDiff}/${pyGreen.length} bytes differ by >2 (mean |Δ| ${(sumDiff / pyGreen.length).toFixed(2)})`);
+        check(cos >= GREEN_COS_MIN, `green embedding cos vs python ${cos.toFixed(5)} >= ${GREEN_COS_MIN}`);
+        continue;
+      }
+
+      if (py.kind === "clear") check(!r.lowConfidence, "clear hand → confident");
+      if (py.kind === "ambiguous") check(r.lowConfidence, `ambiguous → lowConfidence (test minMargin ${THRESHOLDS.minMargin})`);
 
       const d = r.debug;
       const lmDiff = Math.max(...d.landmarksPx.flatMap(([x, y], i) => [Math.abs(x - py.landmarksPx[i][0]), Math.abs(y - py.landmarksPx[i][1])]));

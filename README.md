@@ -40,6 +40,14 @@ browser caches never go stale). Files:
 Locally, put them in `models/hasta/` and run `ln -sfn ../models/hasta public/hasta-assets`;
 the default asset base is `/hasta-assets`. Then `NEXT_PUBLIC_HASTA_ENGINE=knn npm run dev`.
 
+**Background fill (on by default):** every training image was shot on a green screen,
+so before embedding, the app segments the skin in the hand crop (MediaPipe selfie
+multiclass, loaded from Google's model storage) and paints everything else the
+training backdrop green. On held-out hands pasted onto real photos this lifts top-1
+from 0.31 to 0.50 (`scripts/hasta/bg_eval.py`); it costs ~150 ms per frame on CPU.
+`NEXT_PUBLIC_HASTA_BACKGROUND=none` turns it off (exact training preprocessing).
+A fine-tuned embedder trained on varied backgrounds should make this unnecessary.
+
 Other settings (`lib/hasta/config.ts`): `NEXT_PUBLIC_HASTA_MIN_TOP1` /
 `NEXT_PUBLIC_HASTA_MIN_MARGIN` (low-confidence gate; placeholders until calibrated),
 `NEXT_PUBLIC_HASTA_SMOOTHING_N`, `NEXT_PUBLIC_HASTA_MIN_INTERVAL_MS`, `NEXT_PUBLIC_HASTA_ONNX_FILE`.
@@ -53,6 +61,10 @@ scripts/hasta/.venv/bin/python scripts/hasta/parity_test.py <dataset> --onnx has
 scripts/hasta/.venv/bin/python scripts/hasta/make_fixtures.py <dataset>
 npm test && npm run test:e2e
 ```
+
+The segmenter for the Python side: download
+`selfie_multiclass_256x256.tflite` from Google's model storage (URL in `lib/hasta/config.ts`)
+into `models/hasta/`.
 
 `<dataset>` is a clone of [Bharatanatyam-Mudra-Dataset](https://github.com/jisharajr/Bharatanatyam-Mudra-Dataset).
 Only ship a variant that passes parity (cosine ≥ 0.999). Upload to Hugging Face and

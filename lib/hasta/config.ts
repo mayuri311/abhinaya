@@ -43,6 +43,22 @@ export const HASTA_CONFIG = {
   minTop1: num(process.env.NEXT_PUBLIC_HASTA_MIN_TOP1, 0.0),
   minMargin: num(process.env.NEXT_PUBLIC_HASTA_MIN_MARGIN, 0.0),
 
+  /**
+   * Background fill before embedding. Every training image is shot on a green
+   * screen, so "green" segments the skin in the crop (MediaPipe selfie
+   * multiclass) and paints everything else the training backdrop green.
+   * scripts/hasta/bg_eval.py: hands pasted onto real photos, top-1 0.31 → 0.50.
+   * "none" = exact training preprocessing (what the parity tests check).
+   */
+  background: (process.env.NEXT_PUBLIC_HASTA_BACKGROUND === "none" ? "none" : "green") as "green" | "none",
+  /** Median green-screen pixel of the training images (bg_eval.backdrop_green). */
+  backdropGreen: [74, 198, 119] as [number, number, number],
+  segmenterUrl:
+    process.env.NEXT_PUBLIC_HASTA_SEGMENTER_URL ??
+    "https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/1/selfie_multiclass_256x256.tflite",
+  /** selfie_multiclass classes: 0 bg, 1 hair, 2 body-skin, 3 face-skin, 4 clothes, 5 others */
+  skinClass: 2,
+
   /** Live video: majority vote over the last N predictions. */
   smoothingWindow: num(process.env.NEXT_PUBLIC_HASTA_SMOOTHING_N, 5),
   /** Live video: minimum gap between inferences. A new one never starts before the last finishes. */

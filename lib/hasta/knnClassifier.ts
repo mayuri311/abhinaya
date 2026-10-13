@@ -2,12 +2,14 @@
  * DINOv2 + kNN hasta classifier (browser). Pixels in, HastaResult out:
  *
  *   pad frame → HandLandmarker (IMAGE) → square crop → PIL-bicubic 224 →
- *   ImageNet-normalise → [worker] ONNX embed → cosine kNN (per-class max)
+ *   [optional: skin-segment, fill background green] → ImageNet-normalise →
+ *   [worker] ONNX embed → cosine kNN (per-class max)
  *
  * Same contract as scripts/hasta/hasta_ref.py; see lib/hasta/preprocess.ts.
  */
 
-import { FilesetResolver, HandLandmarker } from "@mediapipe/tasks-vision";
+import { FilesetResolver, HandLandmarker, ImageSegmenter } from "@mediapipe/tasks-vision";
+import { fillBackground } from "./background";
 import { HASTA_CONFIG, MEDIAPIPE_WASM } from "./config";
 import { cropPixels, padAmount, resizeBicubic, toTensor, cropBox, type PixelBuffer, type PixelBox } from "./preprocess";
 import { rankClasses } from "./rank";
@@ -20,7 +22,10 @@ export type KnnDebug = {
   pad: number;
   landmarksPx: [number, number][];
   boxPadded: PixelBox;
+  /** Crop exactly as at training time. */
   crop: PixelBuffer;
+  /** What the embedder actually saw (crop, or crop with the background filled). */
+  modelInput: PixelBuffer;
   embedding: Float32Array;
   embedMs: number;
   knnMs: number;
@@ -39,6 +44,7 @@ export type KnnOptions = {
   thresholds?: { minTop1: number; minMargin: number };
   executionProviders?: string[];
   landmarkerDelegate?: "CPU" | "GPU";
+  background?: "green" | "none";
   onProgress?: (loaded: number, total: number) => void;
   /** Override for non-Next bundlers (the e2e harness). */
   createWorker?: () => Worker;
@@ -92,8 +98,9 @@ export async function createKnnClassifier(opts: KnnOptions = {}): Promise<KnnCla
   };
   worker.postMessage(init);
 
+  const background = opts.background ?? HASTA_CONFIG.background;
   const vision = await FilesetResolver.forVisionTasks(MEDIAPIPE_WASM);
-  const [landmarker, executionProvider] = await Promise.all([
+  const [landmarker, segmenter, executionProvider] = await Promise.all([
     HandLandmarker.createFromOptions(vision, {
       baseOptions: { modelAssetPath: url(files.landmarker), delegate: opts.landmarkerDelegate ?? "CPU" },
       runningMode: "IMAGE",
@@ -101,12 +108,44 @@ export async function createKnnClassifier(opts: KnnOptions = {}): Promise<KnnCla
       minHandDetectionConfidence: 0.3,
       minHandPresenceConfidence: 0.3,
     }),
+    background === "green"
+      ? ImageSegmenter.createFromOptions(vision, {
+          baseOptions: { modelAssetPath: HASTA_CONFIG.segmenterUrl, delegate: "CPU" },
+          runningMode: "IMAGE",
+          outputConfidenceMasks: true,
+          outputCategoryMask: false,
+        })
+      : null,
     ready,
   ]);
 
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
   const [fr, fg, fb] = meta.crop.pad_fill;
+  const segCanvas = document.createElement("canvas");
+  const segCtx = segCanvas.getContext("2d", { willReadFrequently: true })!;
+
+  /** Skin-segment the crop and paint everything else the training backdrop green. */
+  function greenBackground(crop: PixelBuffer): PixelBuffer {
+    segCanvas.width = crop.width;
+    segCanvas.height = crop.height;
+    const img = segCtx.createImageData(crop.width, crop.height);
+    for (let i = 0; i < crop.width * crop.height; i++) {
+      img.data[i * 4] = crop.data[i * 3];
+      img.data[i * 4 + 1] = crop.data[i * 3 + 1];
+      img.data[i * 4 + 2] = crop.data[i * 3 + 2];
+      img.data[i * 4 + 3] = 255;
+    }
+    segCtx.putImageData(img, 0, 0);
+    const res = segmenter!.segment(segCanvas);
+    try {
+      const mask = res.confidenceMasks?.[HASTA_CONFIG.skinClass]?.getAsFloat32Array();
+      if (!mask) throw new Error("segmenter returned no skin mask");
+      return fillBackground(crop, mask, HASTA_CONFIG.backdropGreen);
+    } finally {
+      res.close();
+    }
+  }
 
   function embed(tensor: Float32Array) {
     const id = nextId++;
@@ -139,7 +178,8 @@ export async function createKnnClassifier(opts: KnnOptions = {}): Promise<KnnCla
       [0, 0, region.width, region.height]);
     const crop = resizeBicubic(rgb, meta.crop.size, meta.crop.size);
 
-    const out = await embed(toTensor(crop, meta));
+    const modelInput = segmenter ? greenBackground(crop) : crop;
+    const out = await embed(toTensor(modelInput, meta));
     const ranked = rankClasses(out.scores, meta.classes, thresholds);
     const hand = det.handedness[0]?.[0];
     const result: HastaResult & { debug?: KnnDebug } = {
@@ -151,7 +191,7 @@ export async function createKnnClassifier(opts: KnnOptions = {}): Promise<KnnCla
       latencyMs: performance.now() - t0,
     };
     if (debug) {
-      result.debug = { pad: p, landmarksPx, boxPadded, crop, embedding: out.embedding,
+      result.debug = { pad: p, landmarksPx, boxPadded, crop, modelInput, embedding: out.embedding,
         embedMs: out.embedMs, knnMs: out.knnMs };
     }
     return result;
@@ -163,6 +203,7 @@ export async function createKnnClassifier(opts: KnnOptions = {}): Promise<KnnCla
     meta,
     close() {
       landmarker.close();
+      segmenter?.close();
       worker.terminate();
       for (const { reject } of pending.values()) reject(new Error("classifier closed"));
       pending.clear();

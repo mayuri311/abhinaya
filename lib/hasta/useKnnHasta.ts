@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 import { HASTA_CONFIG } from "./config";
 import { createKnnClassifier, type KnnClassifier } from "./knnClassifier";
 import { majorityVote } from "./rank";
+import type { PixelBuffer } from "./preprocess";
 import type { HastaResult } from "./types";
 
 export type KnnPhase = "idle" | "loading" | "ready" | "error";
@@ -20,6 +21,8 @@ export function useKnnHasta(videoRef: RefObject<HTMLVideoElement | null>, enable
   const [backend, setBackend] = useState("");
   const [latest, setLatest] = useState<HastaResult | null>(null);
   const [smoothed, setSmoothed] = useState<HastaResult | null>(null);
+  /** The 224×224 image the embedder saw for the latest frame (after any background fill). */
+  const [modelView, setModelView] = useState<PixelBuffer | null>(null);
   /** Latest raw result, for drawing the crop box at frame rate. */
   const latestRef = useRef<HastaResult | null>(null);
 
@@ -40,8 +43,9 @@ export function useKnnHasta(videoRef: RefObject<HTMLVideoElement | null>, enable
           const t0 = performance.now();
           const video = videoRef.current;
           if (video && video.readyState >= 2 && video.videoWidth > 0) {
-            const r = await clf.classify(video);
+            const { debug, ...r } = await clf.classify(video, { debug: true });
             if (cancelled) break;
+            setModelView(debug?.modelInput ?? null);
             recent.push(r);
             if (recent.length > HASTA_CONFIG.smoothingWindow) recent.shift();
             latestRef.current = r;
@@ -66,5 +70,5 @@ export function useKnnHasta(videoRef: RefObject<HTMLVideoElement | null>, enable
     };
   }, [enabled, videoRef]);
 
-  return { phase, progress, error, backend, latest, smoothed, latestRef };
+  return { phase, progress, error, backend, latest, smoothed, modelView, latestRef };
 }
