@@ -18,7 +18,8 @@ from PIL import Image
 import mediapipe as mp
 from mediapipe.tasks.python import BaseOptions, vision
 
-DEFAULT_MODEL_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "models", "hasta")
+# HASTA_MODEL_DIR=models/hasta_ft points every script (parity_test, make_fixtures, …) at another model.
+DEFAULT_MODEL_DIR = os.environ.get("HASTA_MODEL_DIR") or os.path.join(os.path.dirname(__file__), "..", "..", "models", "hasta")
 
 # Placeholders: TODO calibrate on a near-duplicate-grouped held-out set (see lib/hasta/config.ts).
 MIN_TOP1 = 0.0
@@ -36,8 +37,10 @@ SKIN_FULL_CONFIDENCE = 0.5
 
 
 class HastaPipeline:
-    def __init__(self, model_dir=DEFAULT_MODEL_DIR, onnx_name="hasta_dinov2_vits14_embed.onnx", background=None):
-        """background: None (exact training preprocessing) or "green" (skin-segment + green fill)."""
+    def __init__(self, model_dir=DEFAULT_MODEL_DIR, onnx_name="hasta_dinov2_vits14_embed.onnx", background=None,
+                 load_embedder=True):
+        """background: None (exact training preprocessing) or "green" (skin-segment + green fill).
+        load_embedder=False: detector/cropper only (no ONNX session, no bank)."""
         self.model_dir, self.background, self._segmenter = model_dir, background, None
         with open(os.path.join(model_dir, "knn_bank_meta.json")) as f:
             self.meta = json.load(f)
@@ -55,6 +58,8 @@ class HastaPipeline:
             min_hand_detection_confidence=0.3,
             min_hand_presence_confidence=0.3,
         ))
+        if not load_embedder:
+            return
         self.session = ort.InferenceSession(os.path.join(model_dir, onnx_name), providers=["CPUExecutionProvider"])
         self.bank = np.load(os.path.join(model_dir, "knn_bank_feats_fp16.npy")).astype(np.float32)
         self.labels = np.load(os.path.join(model_dir, "knn_bank_labels.npy")).astype(np.int64)

@@ -98,7 +98,7 @@ export async function createKnnClassifier(opts: KnnOptions = {}): Promise<KnnCla
   };
   worker.postMessage(init);
 
-  const background = opts.background ?? HASTA_CONFIG.background;
+  const background = opts.background ?? HASTA_CONFIG.background ?? meta.background_fill ?? "green";
   const vision = await FilesetResolver.forVisionTasks(MEDIAPIPE_WASM);
   const [landmarker, segmenter, executionProvider] = await Promise.all([
     HandLandmarker.createFromOptions(vision, {

@@ -34,4 +34,6 @@ export type HastaMeta = {
   };
   normalize: { mean: [number, number, number]; std: [number, number, number] };
   input: string;
+  /** Background treatment the embedder expects (absent on the original files → "green"). */
+  background_fill?: "green" | "none";
 };

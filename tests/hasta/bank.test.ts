@@ -6,7 +6,7 @@ import { majorityVote, rankClasses } from "@/lib/hasta/rank";
 import type { HastaMeta, HastaResult } from "@/lib/hasta/types";
 
 const ROOT = path.resolve(__dirname, "../..");
-const MODELS = path.join(ROOT, "models/hasta");
+const MODELS = path.resolve(process.env.HASTA_MODEL_DIR ?? path.join(ROOT, "models/hasta"));
 const FIXTURES = path.join(ROOT, "tests/fixtures/hasta");
 const haveModels = existsSync(path.join(MODELS, "knn_bank_feats_fp16.npy"));
 

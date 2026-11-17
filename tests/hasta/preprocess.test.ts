@@ -10,7 +10,7 @@ import type { HastaMeta } from "@/lib/hasta/types";
 
 const ROOT = path.resolve(__dirname, "../..");
 const FIXTURES = path.join(ROOT, "tests/fixtures/hasta");
-const META_PATH = path.join(ROOT, "models/hasta/knn_bank_meta.json");
+const META_PATH = path.join(path.resolve(process.env.HASTA_MODEL_DIR ?? path.join(ROOT, "models/hasta")), "knn_bank_meta.json");
 const haveFixtures = existsSync(FIXTURES) && existsSync(META_PATH);
 
 describe("roundHalfEven (Python round)", () => {

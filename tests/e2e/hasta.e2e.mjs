@@ -24,10 +24,11 @@ import puppeteer from "puppeteer-core";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const FIXTURES = path.join(ROOT, "tests/fixtures/hasta");
-const MODELS = path.join(ROOT, "models/hasta");
+const MODELS = path.resolve(process.env.HASTA_MODEL_DIR ?? path.join(ROOT, "models/hasta"));
 const CHROME = process.env.CHROME_PATH ?? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const EPS = (process.env.HASTA_EPS ?? "wasm,webgpu").split(",");
-const THRESHOLDS = { minTop1: 0, minMargin: 0.01 }; // test-only: exercises the gate, NOT calibrated values
+// Test-only gate, NOT calibrated values: halfway between the ambiguous fixture's margin and the
+// smallest clear-hand margin, so the check works for whichever model made the fixtures.
 const COS_MIN = 0.999;
 // Green fill adds a segmenter whose WASM and native builds differ slightly at mask edges.
 const GREEN_COS_MIN = 0.99;
@@ -40,6 +41,9 @@ if (!existsSync(FIXTURES)) {
 
 const fixtures = readdirSync(FIXTURES).filter((f) => f.endsWith(".json")).sort()
   .map((f) => JSON.parse(readFileSync(path.join(FIXTURES, f), "utf8")));
+const ambiguousMargin = fixtures.find((f) => f.kind === "ambiguous").margin;
+const clearMargin = Math.min(...fixtures.filter((f) => f.kind === "clear").map((f) => f.margin));
+const THRESHOLDS = { minTop1: 0, minMargin: (ambiguousMargin + clearMargin) / 2 };
 
 const out = mkdtempSync(path.join(tmpdir(), "hasta-e2e-"));
 const common = { bundle: true, format: "esm", platform: "browser", target: "es2022", logLevel: "error",

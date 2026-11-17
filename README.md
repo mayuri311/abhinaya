@@ -40,7 +40,28 @@ browser caches never go stale). Files:
 Locally, put them in `models/hasta/` and run `ln -sfn ../models/hasta public/hasta-assets`;
 the default asset base is `/hasta-assets`. Then `NEXT_PUBLIC_HASTA_ENGINE=knn npm run dev`.
 
-**Background fill (on by default):** every training image was shot on a green screen,
+**Fine-tuned embedder (`scripts/hasta/finetune.py`):** the original frozen DINOv2 matched webcam
+crops by their background, because every training photo is on a green screen. `finetune.py`
+trains it on the same hands pasted onto random photos (plus blur/compression/colour damage).
+Held-out hands on backgrounds never used in training: 30% → 96% top-1; with whole near-duplicate
+groups held out (the honest number): 20% → 94%. Its `knn_bank_meta.json` sets
+`"background_fill": "none"`, so the app skips the green fill below. Runs on a Mac (MPS) in
+~15 min or on a Colab GPU:
+
+```bash
+git clone -b staging https://github.com/mayuri311/abhinaya.git && cd abhinaya/scripts/hasta
+pip install torch torchvision mediapipe onnx onnxruntime pandas scikit-learn scipy pillow
+git clone --depth 1 https://github.com/jisharajr/Bharatanatyam-Mudra-Dataset.git /content/ds
+mkdir -p /content/bgs && for i in $(seq 0 1084); do curl -sfL -o /content/bgs/p$i.jpg https://picsum.photos/id/$i/640/480 || true; done
+# put the five original model files in models/hasta/ first (meta + landmarker are reused)
+python finetune.py prep  --dataset /content/ds --cache /content/cache
+python finetune.py train --cache /content/cache --bgs /content/bgs
+python finetune.py export && python finetune.py bank --cache /content/cache   # → models/hasta_ft/
+```
+
+Keep some backgrounds out of `--bgs` and test with `ft_eval.py` on those.
+
+**Background fill (default for the original files only):** every training image was shot on a green screen,
 so before embedding, the app segments the skin in the hand crop (MediaPipe selfie
 multiclass, loaded from Google's model storage) and paints everything else the
 training backdrop green. On held-out hands pasted onto real photos this lifts top-1

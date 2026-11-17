@@ -49,8 +49,12 @@ export const HASTA_CONFIG = {
    * multiclass) and paints everything else the training backdrop green.
    * scripts/hasta/bg_eval.py: hands pasted onto real photos, top-1 0.31 → 0.50.
    * "none" = exact training preprocessing (what the parity tests check).
+   * Unset: follow knn_bank_meta.json's "background_fill" (the fine-tuned embedder ships "none"),
+   * falling back to "green" for the original frozen-DINOv2 files.
    */
-  background: (process.env.NEXT_PUBLIC_HASTA_BACKGROUND === "none" ? "none" : "green") as "green" | "none",
+  background: (["green", "none"].includes(process.env.NEXT_PUBLIC_HASTA_BACKGROUND ?? "")
+    ? process.env.NEXT_PUBLIC_HASTA_BACKGROUND
+    : null) as "green" | "none" | null,
   /** Median green-screen pixel of the training images (bg_eval.backdrop_green). */
   backdropGreen: [74, 198, 119] as [number, number, number],
   segmenterUrl:
